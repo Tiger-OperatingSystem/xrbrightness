@@ -8,3 +8,5 @@ mv DEBIAN ${build_dir}
 dpkg-deb -b ${build_dir} .
 
 mv ${build_dir}/* .
+
+mv ./*.deb xrbrightness.deb
