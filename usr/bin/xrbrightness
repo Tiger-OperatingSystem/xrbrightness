@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+export GTK_THEME="Adwaita:dark"
+
+export output=$(xrandr -q | grep ' connected' | head -n 1 | cut -d ' ' -f1)
+export current_value=$(xrandr --verbose | awk '/Brightness/ { print $2; exit }')
+
+function displayNotify(){
+  local percentage=$(echo ${new_value}*100 | bc)
+  yad --center --no-buttons --fixed --borders=32 --close-on-unfocus --undecorated \
+      --skip-taskbar --on-top --timeout=1 --width=420 --multi-progress --bar=""   \
+      --text="<big><b>Brilho da tela</b></big>\n" ${percentage}
+}
+
+function increase(){
+  # Se o valor for 1, saia, do contrário causaria a saturação da tela
+
+  local new_value=$(echo "scale=1; ${current_value}+0.1" | bc)
+  displayNotify ${new_value} &
+
+  [ "${current_value}" = "1.0" ] && return
+  xrandr --output ${output} --brightness ${new_value}
+}
+
+function decrease(){
+  # Se o valor for 1, saia, do contrário causaria a obscurecimento da tela
+
+  local new_value=$(echo "scale=1; ${current_value}-0.1" | bc)
+  displayNotify ${new_value} &
+
+  [ "${current_value}" = "0.10" ] && return
+  [ "${current_value}" = "0.1"  ] && return
+
+  xrandr --output ${output} --brightness ${new_value}
+}
+
+[ "${1}" = "" ] && {
+  echo "  xrbrightness - v1.0
+--------------------------------------------
+
+  Uso:
+    - Para aumentar o brilho:
+        ${0} increase
+
+    - Para diminuir o brilho:
+        ${0} increase
+"
+  exit
+}
+
+[ "${1}" = "increase" ] && increase
+[ "${1}" = "decrease" ] && decrease

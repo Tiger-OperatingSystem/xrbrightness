@@ -1,0 +1,7 @@
+Package: xrbrightness
+Priority: optional
+Version: 1.0
+Architecture: all
+Maintainer: Natanael Barbosa Santos
+Depends: yad, xrandr
+Description: Utilitátio auxiliar para alterar o brilho da tela usando Fn, usa xrandr para definir o brilho e yad para dar o feedback percentual
